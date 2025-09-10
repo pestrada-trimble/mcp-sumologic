@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { search } from '@/domains/sumologic/client.js';
+import { parseTimeRange } from '@/utils/time.js';
 import * as Sumo from '@/lib/sumologic/client.js';
 
 // Load environment variables from .env file
@@ -23,6 +24,7 @@ const server = new McpServer({
 // Add a search tool
 server.tool(
   'search_sumologic',
+  'Execute a Sumo Logic log search for the given query. Times can be absolute (ISO 8601) or relative like -15m, -2h, -3d, -1w; use "now" as current time. If only from is relative, to defaults to now.',
   {
     query: z.string(),
     from: z.string().optional(),
@@ -32,7 +34,8 @@ server.tool(
     try {
       // remove any new lines in the query
       const cleanedQuery = query.replace(/\n/g, '');
-      const results = await search(sumoClient, cleanedQuery, { from, to });
+      const parsed = parseTimeRange({ from, to });
+      const results = await search(sumoClient, cleanedQuery, parsed);
 
       // Safely stringify the results, handling potential circular references
       const safeStringify = (obj: any) => {

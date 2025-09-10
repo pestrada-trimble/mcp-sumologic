@@ -33,7 +33,7 @@ export async function search(
     query,
     from,
     to,
-    timeZone: 'Asia/Hong_Kong',
+    timeZone: 'America/New_York',
   };
 
   try {
@@ -48,6 +48,7 @@ export async function search(
           await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
         }
       } catch (statusError) {
+        console.log('Error fetching job status:', statusError);
         throw statusError;
       }
     } while (status.state !== 'DONE GATHERING RESULTS');
@@ -131,6 +132,13 @@ export async function search(
       messages: sanitizedMessages,
     };
   } catch (error) {
+    const apiError = error as SumoAPIError;
+    console.error('Sumo Logic API Error:', {
+      statusCode: apiError.statusCode,
+      message: apiError.message,
+      error: apiError.error,
+      responseBody: apiError.response?.body,
+    });
     return {
       messages: [],
     };

@@ -1,0 +1,9 @@
+services:
+  mcp-sumologic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mcp/sumologic:latest
+    container_name: mcp-sumologic
+    env_file:
+      - .env
