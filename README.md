@@ -15,6 +15,7 @@ A Model Context Protocol (MCP) server that integrates with Sumo Logic's API to p
 ENDPOINT=https://api.au.sumologic.com/api/v1  # Sumo Logic API endpoint
 SUMO_API_ID=your_api_id                       # Sumo Logic API ID
 SUMO_API_KEY=your_api_key                     # Sumo Logic API Key
+MASK_SENSITIVE_INFO=true                      # Toggle PII masking (true|false, default true)
 ```
 
 ## Setup
@@ -79,6 +80,8 @@ SUMO_API_KEY=your_api_key                     # Sumo Logic API Key
    ENDPOINT=your_endpoint
    SUMO_API_ID=your_api_id
    SUMO_API_KEY=your_api_key
+   # Optional: disable masking for debugging (NOT recommended in prod)
+   MASK_SENSITIVE_INFO=false
    ```
 
 ## VS Code MCP Configuration

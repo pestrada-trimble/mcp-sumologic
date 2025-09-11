@@ -1,10 +1,29 @@
 /**
- * Masks sensitive information in a string
+ * Determines if masking of sensitive information is enabled.
+ * Controlled via the environment variable `MASK_SENSITIVE_INFO`.
+ * Accepted truthy values (case-insensitive): 1, true, yes, on
+ * Accepted falsy values: 0, false, no, off
+ * Default (unset): enabled (true)
+ */
+export function isMaskingEnabled(): boolean {
+  const v = process.env.MASK_SENSITIVE_INFO;
+  if (!v) return true; // default ON
+  const value = v.toLowerCase();
+  if (["0", "false", "no", "off"].includes(value)) return false;
+  if (["1", "true", "yes", "on"].includes(value)) return true;
+  // Any other arbitrary value -> treat as enabled to be safe
+  return true;
+}
+
+/**
+ * Masks sensitive information in a string. This can be disabled by setting
+ * the environment variable `MASK_SENSITIVE_INFO` to a falsy value (false, 0, no, off).
  * @param text The text to mask sensitive information in
- * @returns The text with sensitive information masked
+ * @returns The text with sensitive information masked (or original if disabled)
  */
 export function maskSensitiveInfo(text: string): string {
   if (typeof text !== 'string') return text;
+  if (!isMaskingEnabled()) return text;
 
   // Helper function to validate if a string is likely a phone number
   const isLikelyPhoneNumber = (str: string): boolean => {
